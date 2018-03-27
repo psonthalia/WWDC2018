@@ -4,7 +4,7 @@ import SpriteKit
 import PlaygroundSupport // for the live preview
 
 // create a scene view with an empty scene
-var sceneView = SCNView(frame: CGRect(x: 0, y: -120, width: 800, height: 800))
+var sceneView = SCNView(frame: CGRect(x: 0, y: -50, width: 800, height: 800))
 var scene = SCNScene()
 sceneView.scene = scene
 var image: UIImage = UIImage(named: "stars.jpg")!
@@ -12,6 +12,11 @@ var bgImage = UIImageView(image: image)
 bgImage.frame = CGRect(x:0,y:0,width:100,height:200)
 scene.background.contents = UIImage(named: "stars.jpg")
 let view = UIView(frame: CGRect(x: 0, y: 0, width: 800, height: 800))
+let mainLabel = UILabel(frame: CGRect(x: -18, y: 10, width: 800, height: 50))
+mainLabel.textAlignment = .center
+mainLabel.font = mainLabel.font.withSize(40)
+mainLabel.text = "The Solar System"
+mainLabel.textColor = UIColor.white
 view.addSubview(bgImage)
 
 let camera = SCNNode()
@@ -54,7 +59,7 @@ public class Main {
             let geometry = SCNSphere(radius: 2)
             let node = SCNNode(geometry: geometry)
             node.position = SCNVector3Make(Float((2)*CGFloat(i)), -3-Float((3.35)*CGFloat(i)), 0)
-            node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 50)))
+            node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 2 * .pi, y: 0, z: 0, duration: 1)))
             
 
             let material = SCNMaterial()
@@ -63,7 +68,6 @@ public class Main {
             holderNode.addChildNode(node)
             
             holderNode.runAction(SCNAction.repeatForever(SCNAction.rotate(by: .pi, around: SCNVector3(0,0,1), duration: TimeInterval(i))))
-
         }
     }
 }
@@ -71,4 +75,5 @@ let main = Main()
 main.setUpSolarSystem()
 
 view.addSubview(sceneView)
+view.addSubview(mainLabel)
 PlaygroundPage.current.liveView = view
