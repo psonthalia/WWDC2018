@@ -42,7 +42,8 @@ public class Main {
         scene.rootNode.addChildNode(sunNode)
 
         for i in 1...8 {
-            let cylinder = SCNCylinder(radius: CGFloat(Float((2)*CGFloat(i))) * 3.55, height: 0.01)
+            let cylinder = SCNCylinder(radius: CGFloat(3+CGFloat(Float(5.45)*Float(i))), height: 0.01)
+
             cylinder.firstMaterial?.diffuse.contents = UIImage(named: "circle.png")!
             let nodeCyl = SCNNode(geometry: cylinder)
             nodeCyl.position = SCNVector3Make(0, 0, 0)
