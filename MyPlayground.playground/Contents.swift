@@ -1,5 +1,6 @@
 import UIKit
 import SceneKit
+import SpriteKit
 import PlaygroundSupport // for the live preview
 
 // create a scene view with an empty scene
@@ -12,7 +13,6 @@ bgImage.frame = CGRect(x:0,y:0,width:100,height:200)
 scene.background.contents = UIImage(named: "stars.jpg")
 let view = UIView(frame: CGRect(x: 0, y: 0, width: 700, height: 700))
 view.addSubview(bgImage)
-
 
 let camera = SCNNode()
 camera.camera = SCNCamera()
@@ -42,6 +42,13 @@ public class Main {
         scene.rootNode.addChildNode(sunNode)
 
         for i in 1...8 {
+            let cylinder = SCNCylinder(radius: CGFloat(Float((2)*CGFloat(i))) * 3.55, height: 0.01)
+            cylinder.firstMaterial?.diffuse.contents = UIImage(named: "circle.png")!
+            let nodeCyl = SCNNode(geometry: cylinder)
+            nodeCyl.position = SCNVector3Make(0, 0, 0)
+            nodeCyl.rotation = SCNVector4Make(0.1, 0, 0, GLKMathDegreesToRadians(90))
+            sunNode.addChildNode(nodeCyl)
+            
             let holderNode = SCNNode()
             holderNode.position = SCNVector3(0,0,0)
             sunNode.addChildNode(holderNode)
