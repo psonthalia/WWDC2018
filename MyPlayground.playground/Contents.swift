@@ -4,29 +4,23 @@ import SpriteKit
 import PlaygroundSupport // for the live preview
 
 // create a scene view with an empty scene
-var sceneView = SCNView(frame: CGRect(x: 0, y: 0, width: 700, height: 700))
+var sceneView = SCNView(frame: CGRect(x: 0, y: -120, width: 800, height: 800))
 var scene = SCNScene()
 sceneView.scene = scene
 var image: UIImage = UIImage(named: "stars.jpg")!
 var bgImage = UIImageView(image: image)
 bgImage.frame = CGRect(x:0,y:0,width:100,height:200)
 scene.background.contents = UIImage(named: "stars.jpg")
-let view = UIView(frame: CGRect(x: 0, y: 0, width: 700, height: 700))
+let view = UIView(frame: CGRect(x: 0, y: 0, width: 800, height: 800))
 view.addSubview(bgImage)
 
 let camera = SCNNode()
 camera.camera = SCNCamera()
-//camera.zNear = 0
-//camera.zFar = 100
-//let cameraNode = SCNNode()
-camera.position = SCNVector3(x: 10, y: -70, z: 40)
+camera.position = SCNVector3(x: 0, y: -70, z: 50)
 camera.eulerAngles = SCNVector3(x: 0.74533, y: 0, z: 0)
-//cameraNode.camera = camera
-//let cameraOrbit = SCNNode()
-//cameraOrbit.addChildNode(cameraNode)
 scene.rootNode.addChildNode(camera)
-let moveCameraAc = SCNAction.move(by: SCNVector3Make(-30, 0, 0), duration: 10)
-moveCameraAc.timingMode = .easeInEaseOut
+//let moveCameraAc = SCNAction.move(by: SCNVector3Make(-30, 0, 0), duration: 10)
+//moveCameraAc.timingMode = .easeInEaseOut
 //camera.runAction(moveCameraAc)
 
 public class Main {
@@ -35,16 +29,19 @@ public class Main {
         
         let geometry = SCNSphere(radius: 2)
         let sunNode = SCNNode(geometry: geometry)
-        sunNode.position = SCNVector3Make(0, 0, 0)
+        sunNode.position = SCNVector3Make(-1.5, -20, 0)
         let material = SCNMaterial()
         material.diffuse.contents = UIImage(named: images[0])
         geometry.materials = [material]
         scene.rootNode.addChildNode(sunNode)
 
         for i in 1...8 {
-            let cylinder = SCNCylinder(radius: CGFloat(3+CGFloat(Float(5.45)*Float(i))), height: 0.01)
-
-            cylinder.firstMaterial?.diffuse.contents = UIImage(named: "circle.png")!
+            let cylinder = SCNCylinder(radius: CGFloat(3+CGFloat(Float(3.8)*Float(i))), height: 0.01)
+            if(i < 4) {
+                cylinder.firstMaterial?.diffuse.contents = UIImage(named: "circle2.png")!
+            } else {
+                cylinder.firstMaterial?.diffuse.contents = UIImage(named: "circle.png")!
+            }
             let nodeCyl = SCNNode(geometry: cylinder)
             nodeCyl.position = SCNVector3Make(0, 0, 0)
             nodeCyl.rotation = SCNVector4Make(0.1, 0, 0, GLKMathDegreesToRadians(90))
@@ -56,7 +53,7 @@ public class Main {
             
             let geometry = SCNSphere(radius: 2)
             let node = SCNNode(geometry: geometry)
-            node.position = SCNVector3Make(Float((2)*CGFloat(i)), -3-Float((5)*CGFloat(i)), 0)
+            node.position = SCNVector3Make(Float((2)*CGFloat(i)), -3-Float((3.35)*CGFloat(i)), 0)
             node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 50)))
             
 
