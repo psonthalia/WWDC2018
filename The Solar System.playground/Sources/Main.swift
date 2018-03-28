@@ -8,13 +8,15 @@ open class Main: UIView {
     public let mainLabel = UILabel(frame: CGRect(x: -18, y: 10, width: 800, height: 50))
     public var sceneView = SCNView()
     public let camera = SCNNode()
+    public var planetNodes = [SCNNode]()
+    public var holderNodes = [SCNNode]()
     
     public func setUp() {
         sceneView = SCNView(frame: CGRect(x: 0, y: -50, width: 800, height: 800))
         sceneView.isUserInteractionEnabled = true
         sceneView.scene = scene
-        var image: UIImage = UIImage(named: "stars.jpg")!
-        var bgImage = UIImageView(image: image)
+        let image: UIImage = UIImage(named: "stars.jpg")!
+        let bgImage = UIImageView(image: image)
         bgImage.frame = CGRect(x:0,y:0,width:100,height:200)
         scene.background.contents = UIImage(named: "stars.jpg")
         self.frame = CGRect(x: 0, y: 0, width: 800, height: 800)
@@ -63,7 +65,7 @@ open class Main: UIView {
             
             let geometry = SCNSphere(radius: 2)
             let node = SCNNode(geometry: geometry)
-            node.position = SCNVector3Make(Float((2)*CGFloat(i)), -3-Float((3.35)*CGFloat(i)), 0)
+            node.position = SCNVector3Make(0, -3-Float((3.35)*CGFloat(i)), 0)
             node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 2 * .pi, y: 0, z: 0, duration: 1)))
             
             
@@ -71,8 +73,10 @@ open class Main: UIView {
             material.diffuse.contents = UIImage(named: images[i])
             geometry.materials = [material]
             holderNode.addChildNode(node)
+            planetNodes.append(node)
+            holderNodes.append(holderNode)
             
-            holderNode.runAction(SCNAction.repeatForever(SCNAction.rotate(by: .pi, around: SCNVector3(0,0,1), duration: TimeInterval(i))))
+            holderNode.runAction(SCNAction.repeatForever(SCNAction.rotate(by: .pi, around: SCNVector3(0,0,1), duration: TimeInterval(i*2))))
         }
     }
     override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -84,6 +88,25 @@ open class Main: UIView {
                 let moveCameraAc = SCNAction.move(to: SCNVector3Make(sunNode.position.x, sunNode.position.y - 5, sunNode.position.z+5), duration: 2)
                 moveCameraAc.timingMode = .easeInEaseOut
                 camera.runAction(moveCameraAc)
+            }
+            for i in 0...planetNodes.count-1 {
+                if(tappednode == planetNodes[i]) {
+                    print(planetNodes[i].position.y * 0.3)
+                    print(planetNodes[i].position.y * 0.3)
+                    print(planetNodes[i].worldTransform)
+                    
+//                    var x = planetNodes[i].worldTransform(planetNodes[i].transform)
+//                    print(x.position.x)
+
+                    holderNodes[i].isPaused = true
+                    let radius = planetNodes[i].position.y
+                    let theta = holderNodes[i].eulerAngles.z
+                    
+                    let moveCameraAc = SCNAction.move(to: SCNVector3Make(-radius + (radius * 0.5) * cos(theta), radius + (cos(theta)*1/radius * 1000) * sin(theta), planetNodes[i].position.z+5), duration: 2)
+//                    let moveCameraAc = SCNAction.move(to: SCNVector3Make(-radius * cos(theta) - (mercuryX), radius * sin(theta) - (mercuryY), planetNodes[i].position.z), duration: 2)
+                    moveCameraAc.timingMode = .easeInEaseOut
+                    camera.runAction(moveCameraAc)
+                }
             }
         }
     }
