@@ -10,6 +10,10 @@ open class Main: UIView {
     public let camera = SCNNode()
     public var planetNodes = [SCNNode]()
     public var holderNodes = [SCNNode]()
+    let images = ["sun.jpg", "mercury.jpg", "venus.jpg", "earth.jpg", "mars.jpg", "jupiter.jpg", "saturn.jpg", "uranus.jpg", "neptune.jpg"]
+    
+    let planetNames = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
+
     
     public func setUp() {
         sceneView = SCNView(frame: CGRect(x: 0, y: -50, width: 800, height: 800))
@@ -30,15 +34,6 @@ open class Main: UIView {
         self.addSubview(mainLabel)
         self.isUserInteractionEnabled = true
         
-        camera.camera = SCNCamera()
-        camera.position = SCNVector3(x: 0, y: -70, z: 50)
-        camera.eulerAngles = SCNVector3(x: 0.74533, y: 0, z: 0)
-        scene.rootNode.addChildNode(camera)
-        
-    }
-    @objc public func setUpSolarSystem() {
-        let images = ["sun.jpg", "mercury.jpg", "venus.jpg", "earth.jpg", "mars.jpg", "jupiter.jpg", "saturn.jpg", "uranus.jpg", "neptune.jpg"]
-        
         let geometry = SCNSphere(radius: 2)
         sunNode = SCNNode(geometry: geometry)
         sunNode.position = SCNVector3Make(-1.5, -20, 0)
@@ -47,25 +42,31 @@ open class Main: UIView {
         geometry.materials = [material]
         scene.rootNode.addChildNode(sunNode)
         
+        camera.camera = SCNCamera()
+        camera.position = SCNVector3(x: 0, y: -70, z: 50)
+        camera.eulerAngles = SCNVector3(x: 0.74533, y: 0, z: 0)
+        scene.rootNode.addChildNode(camera)
+    }
+    @objc public func setUpSolarSystem() {
         for i in 1...8 {
-            let cylinder = SCNCylinder(radius: CGFloat(3+CGFloat(Float(3.8)*Float(i))), height: 0.01)
+            let cylinder = SCNCylinder(radius: CGFloat(3+CGFloat(Float(3.7)*Float(i))), height: 0.01)
             if(i < 4) {
                 cylinder.firstMaterial?.diffuse.contents = UIImage(named: "circle2.png")!
             } else {
                 cylinder.firstMaterial?.diffuse.contents = UIImage(named: "circle.png")!
             }
             let nodeCyl = SCNNode(geometry: cylinder)
-            nodeCyl.position = SCNVector3Make(0, 0, 0)
+            nodeCyl.position = SCNVector3Make(-1.5, -20, 0)
             nodeCyl.rotation = SCNVector4Make(0.1, 0, 0, GLKMathDegreesToRadians(90))
-            sunNode.addChildNode(nodeCyl)
+            scene.rootNode.addChildNode(nodeCyl)
             
             let holderNode = SCNNode()
-            holderNode.position = SCNVector3(0,0,0)
-            sunNode.addChildNode(holderNode)
+            holderNode.position = SCNVector3(-1.5, -20, 0)
+            scene.rootNode.addChildNode(holderNode)
             
             let geometry = SCNSphere(radius: 2)
             let node = SCNNode(geometry: geometry)
-            node.position = SCNVector3Make(0, -3-Float((3.35)*CGFloat(i)), 0)
+            node.position = SCNVector3Make(0, -3-Float((3.65)*CGFloat(i)), 0)
             node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 2 * .pi, y: 0, z: 0, duration: 1)))
             
             
@@ -76,8 +77,32 @@ open class Main: UIView {
             planetNodes.append(node)
             holderNodes.append(holderNode)
             
+            if(i == 6) {
+                let geometry2 = SCNCylinder(radius: 3, height: 0.01)
+                let node2 = SCNNode(geometry: geometry2)
+                node2.position = SCNVector3Make(0, 0, 0)
+                let material2 = SCNMaterial()
+                material2.diffuse.contents = UIImage(named: "saturn_ring.png")
+                geometry2.materials = [material2]
+                
+                node.addChildNode(node2)
+
+            }
+            
             holderNode.runAction(SCNAction.repeatForever(SCNAction.rotate(by: .pi, around: SCNVector3(0,0,1), duration: TimeInterval(i*2))))
         }
+//        let holderNode = SCNNode()
+//        holderNode.position = SCNVector3(0, 0, 0)
+//        holderNodes[2].addChildNode(holderNode)
+//
+//        let geometry = SCNPlane.init(width: 10, height: 10)
+//        let teslaNode = SCNNode(geometry: geometry)
+//        teslaNode.position = SCNVector3Make(5, -3-Float((3.35)*CGFloat(2)), 0)
+//        let material = SCNMaterial()
+//        material.diffuse.contents = UIImage(named: "tesla.png")
+//        geometry.materials = [material]
+//        holderNode.addChildNode(teslaNode)
+//        teslaNode.isPaused = true
     }
     override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         let touch = touches.first
@@ -87,25 +112,19 @@ open class Main: UIView {
             if(tappednode == sunNode) {
                 let moveCameraAc = SCNAction.move(to: SCNVector3Make(sunNode.position.x, sunNode.position.y - 5, sunNode.position.z+5), duration: 2)
                 moveCameraAc.timingMode = .easeInEaseOut
+                mainLabel.text = "Sun"
                 camera.runAction(moveCameraAc)
             }
             for i in 0...planetNodes.count-1 {
                 if(tappednode == planetNodes[i]) {
-                    print(planetNodes[i].position.y * 0.3)
-                    print(planetNodes[i].position.y * 0.3)
-                    print(planetNodes[i].worldTransform)
-                    
-//                    var x = planetNodes[i].worldTransform(planetNodes[i].transform)
-//                    print(x.position.x)
-
-                    holderNodes[i].isPaused = true
-                    let radius = planetNodes[i].position.y
-                    let theta = holderNodes[i].eulerAngles.z
-                    
-                    let moveCameraAc = SCNAction.move(to: SCNVector3Make(-radius + (radius * 0.5) * cos(theta), radius + (cos(theta)*1/radius * 1000) * sin(theta), planetNodes[i].position.z+5), duration: 2)
-//                    let moveCameraAc = SCNAction.move(to: SCNVector3Make(-radius * cos(theta) - (mercuryX), radius * sin(theta) - (mercuryY), planetNodes[i].position.z), duration: 2)
+                    let x = holderNodes[i].convertPosition(planetNodes[i].position, to: scene.rootNode)
+                    for j in 0...holderNodes.count - 1 {
+                        holderNodes[j].isPaused = true
+                    }
+                    let moveCameraAc = SCNAction.move(to: SCNVector3Make(x.x, x.y - 5, 7), duration: 2)
                     moveCameraAc.timingMode = .easeInEaseOut
                     camera.runAction(moveCameraAc)
+                    mainLabel.text = planetNames[i]
                 }
             }
         }
