@@ -3,17 +3,16 @@ import SceneKit
 import PlaygroundSupport
 
 open class Main: UIView {
-    public var sunNode = SCNNode()
-    public var scene = SCNScene()
-    public let mainLabel = UILabel(frame: CGRect(x: -18, y: 10, width: 800, height: 50))
-    public var sceneView = SCNView()
-    public let camera = SCNNode()
-    public var planetNodes = [SCNNode]()
-    public var holderNodes = [SCNNode]()
+    var sunNode = SCNNode()
+    var scene = SCNScene()
+    let mainLabel = UILabel(frame: CGRect(x: -18, y: 10, width: 800, height: 50))
+    var sceneView = SCNView()
+    let camera = SCNNode()
+    var planetNodes = [SCNNode]()
+    var holderNodes = [SCNNode]()
     let backButton = UILabel(frame: CGRect(x: 60, y: 15, width: 300, height: 50))
-    let images = ["sun.jpg", "mercury.jpg", "venus.jpg", "earth.jpg", "mars.jpg", "jupiter.jpg", "saturn.jpg", "uranus.jpg", "neptune.jpg"]
     
-    let planetNames = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
+    let planetDescription = UILabel(frame: CGRect(x: 200, y: 500, width: 400, height: 200))
 
     
     public func setUp() {
@@ -39,7 +38,7 @@ open class Main: UIView {
         sunNode = SCNNode(geometry: geometry)
         sunNode.position = SCNVector3Make(-1.5, -20, 0)
         let material = SCNMaterial()
-        material.diffuse.contents = UIImage(named: images[0])
+        material.diffuse.contents = UIImage(named: Constants.images[0])
         geometry.materials = [material]
         scene.rootNode.addChildNode(sunNode)
         
@@ -53,11 +52,18 @@ open class Main: UIView {
         backButton.font = backButton.font.withSize(25)
         backButton.alpha = 0
         backButton.isUserInteractionEnabled = true
-        var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.resumeSolarSystem))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.resumeSolarSystem))
         backButton.addGestureRecognizer(tapGesture)
-
-
         self.addSubview(backButton)
+
+        planetDescription.text = ""
+        planetDescription.textColor = .white
+        planetDescription.font = planetDescription.font.withSize(20)
+        planetDescription.alpha = 0
+        planetDescription.backgroundColor = UIColor(red: 0, green: 0, blue: 255, alpha: 0.5)
+        planetDescription.numberOfLines = 0
+        self.addSubview(planetDescription)
+
     }
     @objc public func setUpSolarSystem() {
         for i in 1...8 {
@@ -83,7 +89,7 @@ open class Main: UIView {
             
             
             let material = SCNMaterial()
-            material.diffuse.contents = UIImage(named: images[i])
+            material.diffuse.contents = UIImage(named: Constants.images[i])
             geometry.materials = [material]
             holderNode.addChildNode(node)
             planetNodes.append(node)
@@ -139,11 +145,12 @@ open class Main: UIView {
                         }
                     }
                     backButton.alpha = 1
-                    
+                    planetDescription.alpha = 1
+                    planetDescription.text = Constants.planetDescriptions[i]
                     let moveCameraAc = SCNAction.move(to: SCNVector3Make(x.x, x.y - 5, 7), duration: 2)
                     moveCameraAc.timingMode = .easeInEaseOut
-                    self.camera.runAction(moveCameraAc)
-                    self.mainLabel.text = self.planetNames[i]
+                    camera.runAction(moveCameraAc)
+                    mainLabel.text = Constants.planetNames[i]
                 }
             }
         }
