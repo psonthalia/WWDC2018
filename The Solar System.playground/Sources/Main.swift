@@ -10,6 +10,7 @@ open class Main: UIView {
     public let camera = SCNNode()
     public var planetNodes = [SCNNode]()
     public var holderNodes = [SCNNode]()
+    let backButton = UILabel(frame: CGRect(x: 60, y: 15, width: 300, height: 50))
     let images = ["sun.jpg", "mercury.jpg", "venus.jpg", "earth.jpg", "mars.jpg", "jupiter.jpg", "saturn.jpg", "uranus.jpg", "neptune.jpg"]
     
     let planetNames = ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"]
@@ -46,6 +47,17 @@ open class Main: UIView {
         camera.position = SCNVector3(x: 0, y: -70, z: 50)
         camera.eulerAngles = SCNVector3(x: 0.74533, y: 0, z: 0)
         scene.rootNode.addChildNode(camera)
+        
+        backButton.text = "< Back"
+        backButton.textColor = .white
+        backButton.font = backButton.font.withSize(25)
+        backButton.alpha = 0
+        backButton.isUserInteractionEnabled = true
+        var tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.resumeSolarSystem))
+        backButton.addGestureRecognizer(tapGesture)
+
+
+        self.addSubview(backButton)
     }
     @objc public func setUpSolarSystem() {
         for i in 1...8 {
@@ -120,13 +132,32 @@ open class Main: UIView {
                     let x = holderNodes[i].convertPosition(planetNodes[i].position, to: scene.rootNode)
                     for j in 0...holderNodes.count - 1 {
                         holderNodes[j].isPaused = true
+                        if(j != i) {
+                            planetNodes[j].isHidden = true
+                        } else {
+                            sunNode.isHidden = true
+                        }
                     }
+                    backButton.alpha = 1
+                    
                     let moveCameraAc = SCNAction.move(to: SCNVector3Make(x.x, x.y - 5, 7), duration: 2)
                     moveCameraAc.timingMode = .easeInEaseOut
-                    camera.runAction(moveCameraAc)
-                    mainLabel.text = planetNames[i]
+                    self.camera.runAction(moveCameraAc)
+                    self.mainLabel.text = self.planetNames[i]
                 }
             }
         }
+    }
+    @objc public func resumeSolarSystem() {
+        let moveCameraAc = SCNAction.move(to: SCNVector3(x: 0, y: -70, z: 50), duration: 2)
+        moveCameraAc.timingMode = .easeInEaseOut
+        camera.runAction(moveCameraAc)
+        backButton.alpha = 0
+        for j in 0...holderNodes.count - 1 {
+            holderNodes[j].isPaused = false
+            planetNodes[j].isHidden = false
+            sunNode.isHidden = false
+        }
+        
     }
 }
