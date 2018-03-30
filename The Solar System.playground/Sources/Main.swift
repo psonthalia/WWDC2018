@@ -109,7 +109,7 @@ open class Main: UIView {
             node.position = SCNVector3Make(0, -3-Float((3.65)*CGFloat(i)), 0)
             node.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, 0)
 
-            node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 0, z:  2 * .pi, duration: 1)))
+            node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 0, z:  2 * .pi, duration: 2)))
             
             
             let material = SCNMaterial()
@@ -131,7 +131,7 @@ open class Main: UIView {
 
             }
             
-            holderNode.runAction(SCNAction.repeatForever(SCNAction.rotate(by: .pi, around: SCNVector3(0,0,1), duration: TimeInterval(i*2))))
+            holderNode.runAction(SCNAction.repeatForever(SCNAction.rotate(by: .pi, around: SCNVector3(0,0,1), duration: TimeInterval(i*2))), forKey: "orbitAction")
         }
 //        let holderNode = SCNNode()
 //        holderNode.position = SCNVector3(0, 0, 0)
@@ -157,12 +157,18 @@ open class Main: UIView {
                 mainLabel.text = "Sun"
                 camera.runAction(moveCameraAc)
                 secondaryLabel.isHidden = true
+                
+                for j in 0...holderNodes.count - 1 {
+                    holderNodes[j].removeAction(forKey: "orbitAction")
+                    planetNodes[j].isHidden = true
+                }
+                backButton.alpha = 1
             }
             for i in 0...planetNodes.count-1 {
                 if(tappednode == planetNodes[i]) {
                     let x = holderNodes[i].convertPosition(planetNodes[i].position, to: scene.rootNode)
                     for j in 0...holderNodes.count - 1 {
-                        holderNodes[j].isPaused = true
+                        holderNodes[j].removeAction(forKey: "orbitAction")
                         if(j != i) {
                             planetNodes[j].isHidden = true
                         } else {
@@ -191,7 +197,7 @@ open class Main: UIView {
         backButton.alpha = 0
         planetDescription.alpha = 0
         for j in 0...holderNodes.count - 1 {
-            holderNodes[j].isPaused = false
+            holderNodes[j].runAction(SCNAction.repeatForever(SCNAction.rotate(by: .pi, around: SCNVector3(0,0,1), duration: TimeInterval((j + 1)*2))), forKey: "orbitAction")
             planetNodes[j].isHidden = false
             sunNode.isHidden = false
         }
