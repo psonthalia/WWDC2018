@@ -6,6 +6,7 @@ open class Main: UIView {
     var sunNode = SCNNode()
     var scene = SCNScene()
     let mainLabel = UILabel(frame: CGRect(x: -18, y: 10, width: 800, height: 50))
+    let secondaryLabel = UILabel(frame: CGRect(x: -18, y: 40, width: 800, height: 50))
     var sceneView = SCNView()
     let camera = SCNNode()
     var planetNodes = [SCNNode]()
@@ -19,19 +20,44 @@ open class Main: UIView {
         sceneView = SCNView(frame: CGRect(x: 0, y: -50, width: 800, height: 800))
         sceneView.isUserInteractionEnabled = true
         sceneView.scene = scene
-        let image: UIImage = UIImage(named: "stars.jpg")!
-        let bgImage = UIImageView(image: image)
-        bgImage.frame = CGRect(x:0,y:0,width:100,height:200)
-        scene.background.contents = UIImage(named: "stars.jpg")
         self.frame = CGRect(x: 0, y: 0, width: 800, height: 800)
+
         
+//        let image: UIImage = UIImage(named: "stars.gif")!
+//        let bgImage = UIImageView(image: image)
+        let bgImage = UIImageView()
+        bgImage.frame = CGRect(x:0,y:0,width:800,height:800)
+
+        var imgListArray = [UIImage]()
+        for countValue in 1...99 {
+            let strImageName : String = "\(countValue).jpg"
+            let image  = UIImage(named:strImageName)
+            imgListArray.append(image!)
+        }
+        var animatedImage = UIImage.animatedImage(with: imgListArray, duration: 2.0)
+//        bgImage.animationImages = imgListArray
+//        bgImage.animationDuration = 1.0
+        bgImage.image = animatedImage
+        
+//        scene.background.contents = UIImage(named: "earth.jpg")
+//                scene.background.contents = bgImage
+
+
         mainLabel.textAlignment = .center
         mainLabel.font = mainLabel.font.withSize(40)
         mainLabel.text = "The Solar System"
         mainLabel.textColor = UIColor.white
+        
+        secondaryLabel.textAlignment = .center
+        secondaryLabel.font = mainLabel.font.withSize(20)
+        secondaryLabel.text = "Click on a planet to learn more"
+        secondaryLabel.textColor = UIColor.white
         self.addSubview(bgImage)
+//        bgImage.startAnimating()
+
         self.addSubview(sceneView)
         self.addSubview(mainLabel)
+        self.addSubview(secondaryLabel)
         self.isUserInteractionEnabled = true
         
         let geometry = SCNSphere(radius: 2)
@@ -63,6 +89,10 @@ open class Main: UIView {
         planetDescription.backgroundColor = UIColor(red: 0, green: 0, blue: 255, alpha: 0.5)
         planetDescription.numberOfLines = 0
         self.addSubview(planetDescription)
+        
+        let insets = UIEdgeInsets.init(top: 0, left: 5, bottom: 0, right: 5)
+        planetDescription.drawText(in: UIEdgeInsetsInsetRect(planetDescription.frame, insets))
+
 
     }
     @objc public func setUpSolarSystem() {
@@ -85,7 +115,9 @@ open class Main: UIView {
             let geometry = SCNSphere(radius: 2)
             let node = SCNNode(geometry: geometry)
             node.position = SCNVector3Make(0, -3-Float((3.65)*CGFloat(i)), 0)
-            node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 2 * .pi, y: 0, z: 0, duration: 1)))
+            node.eulerAngles = SCNVector3Make(GLKMathDegreesToRadians(90), 0, 0)
+
+            node.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 0, z:  2 * .pi, duration: 1)))
             
             
             let material = SCNMaterial()
@@ -132,6 +164,7 @@ open class Main: UIView {
                 moveCameraAc.timingMode = .easeInEaseOut
                 mainLabel.text = "Sun"
                 camera.runAction(moveCameraAc)
+                secondaryLabel.isHidden = true
             }
             for i in 0...planetNodes.count-1 {
                 if(tappednode == planetNodes[i]) {
@@ -147,10 +180,14 @@ open class Main: UIView {
                     backButton.alpha = 1
                     planetDescription.alpha = 1
                     planetDescription.text = Constants.planetDescriptions[i]
-                    let moveCameraAc = SCNAction.move(to: SCNVector3Make(x.x, x.y - 5, 7), duration: 2)
+                    
+                    planetDescription.sizeToFit()
+                    
+                    let moveCameraAc = SCNAction.move(to: SCNVector3Make(x.x, x.y - 7, 7), duration: 2)
                     moveCameraAc.timingMode = .easeInEaseOut
                     camera.runAction(moveCameraAc)
                     mainLabel.text = Constants.planetNames[i]
+                    secondaryLabel.isHidden = true
                 }
             }
         }
@@ -160,11 +197,13 @@ open class Main: UIView {
         moveCameraAc.timingMode = .easeInEaseOut
         camera.runAction(moveCameraAc)
         backButton.alpha = 0
+        planetDescription.alpha = 0
         for j in 0...holderNodes.count - 1 {
             holderNodes[j].isPaused = false
             planetNodes[j].isHidden = false
             sunNode.isHidden = false
         }
-        
+        secondaryLabel.isHidden = false
+        mainLabel.text = "The Solar System"
     }
 }
