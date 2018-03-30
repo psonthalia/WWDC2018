@@ -6,7 +6,7 @@ open class Main: UIView {
     var sunNode = SCNNode()
     var scene = SCNScene()
     let mainLabel = UILabel(frame: CGRect(x: -18, y: 10, width: 800, height: 50))
-    let secondaryLabel = UILabel(frame: CGRect(x: -18, y: 40, width: 800, height: 50))
+    let secondaryLabel = UILabel(frame: CGRect(x: -18, y: 50, width: 800, height: 50))
     var sceneView = SCNView()
     let camera = SCNNode()
     var planetNodes = [SCNNode]()
@@ -20,11 +20,10 @@ open class Main: UIView {
         sceneView = SCNView(frame: CGRect(x: 0, y: -50, width: 800, height: 800))
         sceneView.isUserInteractionEnabled = true
         sceneView.scene = scene
+        scene.background.contents = UIColor.clear
+        sceneView.backgroundColor = UIColor.clear
         self.frame = CGRect(x: 0, y: 0, width: 800, height: 800)
 
-        
-//        let image: UIImage = UIImage(named: "stars.gif")!
-//        let bgImage = UIImageView(image: image)
         let bgImage = UIImageView()
         bgImage.frame = CGRect(x:0,y:0,width:800,height:800)
 
@@ -34,14 +33,8 @@ open class Main: UIView {
             let image  = UIImage(named:strImageName)
             imgListArray.append(image!)
         }
-        var animatedImage = UIImage.animatedImage(with: imgListArray, duration: 2.0)
-//        bgImage.animationImages = imgListArray
-//        bgImage.animationDuration = 1.0
+        let animatedImage = UIImage.animatedImage(with: imgListArray, duration: 5.0)
         bgImage.image = animatedImage
-        
-//        scene.background.contents = UIImage(named: "earth.jpg")
-//                scene.background.contents = bgImage
-
 
         mainLabel.textAlignment = .center
         mainLabel.font = mainLabel.font.withSize(40)
@@ -53,7 +46,6 @@ open class Main: UIView {
         secondaryLabel.text = "Click on a planet to learn more"
         secondaryLabel.textColor = UIColor.white
         self.addSubview(bgImage)
-//        bgImage.startAnimating()
 
         self.addSubview(sceneView)
         self.addSubview(mainLabel)
