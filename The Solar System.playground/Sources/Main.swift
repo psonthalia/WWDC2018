@@ -13,10 +13,11 @@ open class Main: UIView {
     var holderNodes = [SCNNode]()
     let backButton = UILabel(frame: CGRect(x: 60, y: 15, width: 300, height: 50))
     
-    let planetDescription = UILabel(frame: CGRect(x: 200, y: 500, width: 400, height: 200))
+    let planetDescription = Label(frame: CGRect(x: 200, y: 500, width: 400, height: 200))
 
     
     public func setUp() {
+        
         sceneView = SCNView(frame: CGRect(x: 0, y: -50, width: 800, height: 800))
         sceneView.isUserInteractionEnabled = true
         sceneView.scene = scene
@@ -37,12 +38,12 @@ open class Main: UIView {
         bgImage.image = animatedImage
 
         mainLabel.textAlignment = .center
-        mainLabel.font = mainLabel.font.withSize(40)
+        mainLabel.font = UIFont(name:"HelveticaNeue", size: 40.0)
         mainLabel.text = "The Solar System"
         mainLabel.textColor = UIColor.white
         
         secondaryLabel.textAlignment = .center
-        secondaryLabel.font = mainLabel.font.withSize(20)
+        secondaryLabel.font = UIFont(name:"HelveticaNeue", size: 20.0)
         secondaryLabel.text = "Click on a planet to learn more"
         secondaryLabel.textColor = UIColor.white
         self.addSubview(bgImage)
@@ -76,7 +77,7 @@ open class Main: UIView {
 
         planetDescription.text = ""
         planetDescription.textColor = .white
-        planetDescription.font = planetDescription.font.withSize(20)
+        planetDescription.font = UIFont(name:"HelveticaNeue", size: 20.0)
         planetDescription.alpha = 0
         planetDescription.backgroundColor = UIColor(red: 0, green: 0, blue: 255, alpha: 0.5)
         planetDescription.numberOfLines = 0
@@ -180,6 +181,7 @@ open class Main: UIView {
                     planetDescription.text = Constants.planetDescriptions[i]
                     
                     planetDescription.sizeToFit()
+                    planetDescription.frame = CGRect(x: planetDescription.frame.minX, y: planetDescription.frame.minY, width: planetDescription.frame.width, height: planetDescription.frame.height + 80)
                     
                     let moveCameraAc = SCNAction.move(to: SCNVector3Make(x.x, x.y - 7, 7), duration: 2)
                     moveCameraAc.timingMode = .easeInEaseOut
@@ -203,5 +205,12 @@ open class Main: UIView {
         }
         secondaryLabel.isHidden = false
         mainLabel.text = "The Solar System"
+    }
+}
+
+class Label: UILabel {
+    override func drawText(in rect:CGRect) {
+        let insets: UIEdgeInsets = UIEdgeInsets(top: 20.0, left: 30.0, bottom: 20.0, right: 30.0)
+        super.drawText(in: UIEdgeInsetsInsetRect(rect, insets))
     }
 }
