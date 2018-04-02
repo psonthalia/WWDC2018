@@ -5,20 +5,20 @@ import PlaygroundSupport
 open class Main: UIView {
     var sunNode = SCNNode()
     var scene = SCNScene()
-    let mainLabel = UILabel(frame: CGRect(x: -18, y: 10, width: 800, height: 50))
-    let secondaryLabel = UILabel(frame: CGRect(x: -18, y: 50, width: 800, height: 50))
+    let mainLabel = UILabel(frame: CGRect(x: -18, y: 10, width: 1000, height: 50))
+    let secondaryLabel = UILabel(frame: CGRect(x: -18, y: 50, width: 1000, height: 50))
     var sceneView = SCNView()
     let camera = SCNNode()
     var planetNodes = [SCNNode]()
     var holderNodes = [SCNNode]()
     let backButton = UILabel(frame: CGRect(x: 60, y: 15, width: 300, height: 50))
     
-    let planetDescription = Label(frame: CGRect(x: 200, y: 500, width: 400, height: 200))
+    let planetDescription = Label(frame: CGRect(x: 250, y: 350, width: 500, height: 200))
 
     
     public func setUp() {
         
-        sceneView = SCNView(frame: CGRect(x: 0, y: -50, width: 800, height: 800))
+        sceneView = SCNView(frame: CGRect(x: 0, y: -120, width: 1000, height: 800))
         sceneView.isUserInteractionEnabled = true
         sceneView.scene = scene
         scene.background.contents = UIColor.clear
@@ -79,7 +79,7 @@ open class Main: UIView {
         planetDescription.textColor = .white
         planetDescription.font = UIFont(name:"HelveticaNeue", size: 20.0)
         planetDescription.alpha = 0
-        planetDescription.backgroundColor = UIColor(red: 0, green: 0, blue: 255, alpha: 0.5)
+        planetDescription.backgroundColor = UIColor(red: 0, green: 0, blue: 255, alpha: 0.3)
         planetDescription.numberOfLines = 0
         self.addSubview(planetDescription)
         
@@ -163,6 +163,11 @@ open class Main: UIView {
                     holderNodes[j].removeAction(forKey: "orbitAction")
                     planetNodes[j].isHidden = true
                 }
+                planetDescription.alpha = 1
+                planetDescription.text = "The sun lies at the heart of the solar system, where it is by far the largest object. It holds 99.8 percent of the solar system's mass and is roughly 109 times the diameter of the Earth — about one million Earths could fit inside the sun"
+                planetDescription.sizeToFit()
+                planetDescription.frame = CGRect(x: planetDescription.frame.minX, y: planetDescription.frame.minY, width: planetDescription.frame.width, height: planetDescription.frame.height + 80)
+                
                 backButton.alpha = 1
             }
             for i in 0...planetNodes.count-1 {
